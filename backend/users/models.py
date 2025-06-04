@@ -13,4 +13,8 @@ class User(ormar.Model):
     password: str = ormar.String(nullable=False, max_length=60)
     access_level: str = ormar.String(nullable=False, max_length=20)
     status: bool = ormar.Boolean(nullable=False)
-    factory_id: int = ormar.ForeignKey(Factory, nullable=False, onupdate=ormar.ReferentialAction.CASCADE)
+    factory_id: int = ormar.ForeignKey(Factory, onupdate=ormar.ReferentialAction.CASCADE)
+
+    @property
+    def factory_name(self) -> str:
+        return self.factory_id.name if self.factory_id else ""

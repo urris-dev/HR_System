@@ -1,15 +1,24 @@
 from pydantic_settings import BaseSettings
-
+from typing import List
 
 class Settings(BaseSettings):
     DB_PATH: str
     ECHO: bool
 
-    # JWT_ALGORITHM: str
-    # JWT_ACCESS_TOKEN_EXPIRES_IN: int
-    # JWT_REFRESH_TOKEN_EXPIRES_IN: int
-    # JWT_PUBLIC_KEY: str
-    # JWT_PRIVATE_KEY: str
+    ADMIN_FIO: str
+    ADMIN_EMAIL: str
+    ADMIN_PASSWORD: str
+    ADMIN_ACCESS_LEVEL: str
+    ADMIN_STATUS: bool
+
+    FACTORIES_NAMES: list[str]
+    FACTORIES_PRODUCTION_RATE: List[int]
+
+    JWT_ALGORITHM: str
+    JWT_ACCESS_TOKEN_EXPIRES_IN: int
+    JWT_REFRESH_TOKEN_EXPIRES_IN: int
+    JWT_PUBLIC_KEY: str
+    JWT_PRIVATE_KEY: str
 
     # SMTP_HOST: str
     # SMTP_PORT: int
@@ -19,7 +28,7 @@ class Settings(BaseSettings):
     # CLIENT_ORIGIN: str
     # SERVER_ORIGIN: str
 
-    # REGEX_PASSWORD_TEMPLATE: str
+    REGEX_PASSWORD_TEMPLATE: str
 
     class Config:
         env_file = "./.env"
