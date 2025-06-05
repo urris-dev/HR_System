@@ -1,0 +1,86 @@
+.employee-modal-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: flex-end;
+}
+  
+.employee-modal-content {
+    background: white;
+    padding: 2rem;
+    overflow-y: auto;
+    position: relative;
+    font-size: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+  
+.employee-modal-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 2rem;
+}
+
+.close-btn {
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+.employee-modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.form-group label {
+    font-weight: 500;
+}
+  
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 1rem;
+    font-size: 1.3rem;
+    border: 0.1rem solid rgba(102, 102, 102, 0.5);
+}
+
+.form-group span,
+.show-password {
+    font-size: 1rem;
+    color: rgba(28, 29, 34, 0.5);
+}
+
+#showPassword {
+    width: 1rem;
+}
+  
+.submit-btn,
+.remove-btn {
+    background: #004A98;
+    color: white;
+    font-weight: bold;
+    padding: 1rem;
+    border: none;
+    border-radius: 2rem;
+    cursor: pointer;
+    width: 100%;
+}
+
+.remove-btn {
+    background: #980000;
+}

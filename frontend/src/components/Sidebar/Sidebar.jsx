@@ -6,11 +6,17 @@ import EmployeesIcon from '@/assets/employees.svg';
 import ProfileIcon from '@/assets/profile.svg';
 import './Sidebar.css';
 
-export const Sidebar = () => {
+export const Sidebar = ({activeTab, changeActiveTab}) => {
   const userAccessLevel = localStorage.getItem("userAccessLevel");
 
+  function handleOptionClick(tab) {
+    document.getElementById(activeTab)?.removeAttribute("clicked");
+    document.getElementById(tab).setAttribute("clicked", "");
+    changeActiveTab(tab);
+  }
+
   return (
-    <aside className="sidebar">
+    <div className="sidebar">
       <div className="sidebar__header">
         <div className="company-logo">
           <img src={CompanyLogo} alt="РУСЭЛПРОМ" />
@@ -18,20 +24,20 @@ export const Sidebar = () => {
         
         <ul className="sidebar__options">
             <li>
-              <a href="#" className="option">
+              <a className="option" id="requests" onClick={() => handleOptionClick("requests")}>
                 <img src={RequestIcon} alt="+"/>
                 ЗАЯВКИ
               </a>
             </li>
             <li>
-              <a href="#" className="option">
+              <a className="option" id="dismissals" onClick={() => handleOptionClick("dismissals")}>
                 <img src={DismissalIcon} alt="-"/>
                 УВОЛЬНЕНИЯ
               </a>
             </li>
             {userAccessLevel != "user" &&
               <li>
-                <a href="#" className="option">
+                <a className="option" id="employees" onClick={() => handleOptionClick("employees")}>
                   <img src={EmployeesIcon} alt="/\"/>
                   СОТРУДНИКИ
                 </a>
@@ -41,11 +47,11 @@ export const Sidebar = () => {
       </div>
       
       <div className="sidebar__footer">
-        <a href="#" className="profile">
+        <a className="profile" id="profile" onClick={() => handleOptionClick("profile")}>
           <img src={ProfileIcon} alt="/\"/>
           <span>ПРОФИЛЬ</span>
         </a>
       </div>
-    </aside>
+    </div>
   );
 };

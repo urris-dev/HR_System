@@ -27,6 +27,11 @@ async def edit_user(user: schemas.UserEdit, Authorize: oauth2.AuthJWT = Depends(
     return await services.edit_user(user, Authorize)
 
 
+@user_router.delete("/delete-user", dependencies=[Depends(check_access_token)], responses={401: {}, 403: {}})
+async def delete_user(id: int, Authorize: oauth2.AuthJWT = Depends()):
+    return await services.delete_user(id, Authorize)
+
+
 @user_router.post("/login", responses={400: {}})
 async def login(user: schemas.UserLogin, Authorize: oauth2.AuthJWT = Depends()):
     return await services.login_user(user, Authorize)

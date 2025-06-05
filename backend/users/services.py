@@ -37,7 +37,7 @@ async def create_user(user: schemas.UserCreate, Authorize: oauth2.AuthJWT) -> Un
 
     hashed_password = await utils.hash_data(user.password)
     _user = await models.User.objects.create(**user.model_dump(exclude={"password", "factory_name"}), password=hashed_password)    
-    if user.access_level == "user":
+    if user.access_level == "Пользователь":
         factory = await Factory.objects.get(name=user.factory_name)
         _user.factory_id = factory.id
         await _user.update(["factory_id"])
@@ -45,19 +45,30 @@ async def create_user(user: schemas.UserCreate, Authorize: oauth2.AuthJWT) -> Un
     return Response(status_code=200)
 
 
-async def edit_user(user: schemas.UserEdit, Authorize: oauth2.AuthJWT) -> Union[HTTPException, Response]: # !!!
+async def edit_user(user: schemas.UserEdit, Authorize: oauth2.AuthJWT) -> Union[HTTPException, Response]:
     await check_admin_permissions(Authorize)
 
     _user = await models.User.objects.get(id=user.id)
     for field in user.changed_fields:
         if field == "password":
             _user.password = await utils.hash_data(user.password)
-        elif field == "factory_id":
+        elif field == "factory_name":
             factory = await Factory.objects.get(name=user.factory_name)
             _user.factory_id = factory.id
+            await _user.update(["factory_id"])
         else:
-            eval(f"_user.{field} = user.{field}")
+            _user.__setattr__(field, user.__getattribute__(field))
     await _user.update(user.changed_fields)
+
+    return Response(status_code=200)
+
+
+async def delete_user(id: int, Authorize: oauth2.AuthJWT) -> Union[HTTPException, Response]:
+    await check_admin_permissions(Authorize)
+
+    user = await models.User.objects.get(id=id)
+    user.status = False
+    await user.update(["status"])
 
     return Response(status_code=200)
 
