@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from database import base_ormar_config
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from typing import AsyncIterator
 
 from config import settings
@@ -39,13 +40,13 @@ def get_lifespan(config):
 
 app = FastAPI(lifespan=get_lifespan(base_ormar_config))
 
-# origins = [settings.CLIENT_ORIGIN]
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=origins,
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"]
-# )
+origins = [settings.CLIENT_ORIGIN]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 app.include_router(user_router)

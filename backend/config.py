@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     # SMTP_USER: str
     # SMTP_APPLICATION_PASSWORD: str
 
-    # CLIENT_ORIGIN: str
+    CLIENT_ORIGIN: str
     # SERVER_ORIGIN: str
 
     REGEX_PASSWORD_TEMPLATE: str

@@ -1,4 +1,4 @@
-from fastapi.responses import Response
+from fastapi.responses import Response, JSONResponse
 from fastapi.exceptions import HTTPException
 from typing import Union, List
 
@@ -62,7 +62,7 @@ async def edit_user(user: schemas.UserEdit, Authorize: oauth2.AuthJWT) -> Union[
     return Response(status_code=200)
 
 
-async def login_user(user: schemas.UserLogin, Authorize: oauth2.AuthJWT) -> Union[HTTPException, Response]:
+async def login_user(user: schemas.UserLogin, Authorize: oauth2.AuthJWT) -> Union[HTTPException, JSONResponse]:
     try:
         _user = await models.User.objects.get(email=user.email)
     except:
@@ -73,7 +73,7 @@ async def login_user(user: schemas.UserLogin, Authorize: oauth2.AuthJWT) -> Unio
     
     access_token = Authorize.create_access_token(subject=user.email)
     refresh_token = Authorize.create_refresh_token(subject=user.email)
-    response = Response(status_code=200)
+    response = JSONResponse(content={"access_level": _user.access_level}, status_code=200)
     Authorize.set_access_cookies(access_token, response, max_age=JWT_ACCESS_TOKEN_EXPIRES_IN)
     Authorize.set_refresh_cookies(refresh_token, response, max_age=JWT_REFRESH_TOKEN_EXPIRES_IN)
 

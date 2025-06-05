@@ -1,0 +1,55 @@
+.modal__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+  
+.modal__content {
+    background: white;
+    padding: 2rem;
+    border-radius: 2rem;
+    text-align: center;
+    z-index: 1001;
+    width: 50rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+.content__title {
+    grid-row: 1;
+    grid-column: 2 / span 2;
+    align-self: center;
+    justify-self: center;
+    font-size: 2rem;
+    margin: 0;
+}
+
+.content__description {
+    font-size: 1rem;
+    grid-row: 2;
+    grid-column: span 4;
+    align-self: center;
+    justify-self: center;
+}
+
+.modal__close-button {
+    grid-row: 1;
+    grid-column: 4;
+    background-color: #fff;
+    display: flex;
+    justify-content: end;
+    border: none;
+}
+
+.modal__close-button img {
+    width: 30%;
+    cursor: pointer;
+}
