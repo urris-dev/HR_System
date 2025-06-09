@@ -12,6 +12,9 @@ from users.api import user_router
 from users.models import User
 from users.utils import hash_data
 
+from req.models import Request
+from req.api import request_router
+
 async def prerun():
     try:
         await User.objects.get(email=settings.ADMIN_EMAIL)
@@ -50,3 +53,4 @@ app.add_middleware(
 )
 
 app.include_router(user_router)
+app.include_router(request_router)

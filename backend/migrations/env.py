@@ -18,6 +18,7 @@ if config.config_file_name is not None:
 from database import base_ormar_config, DATABASE_URL
 from factories import models
 from users import models
+from req import models
 
 target_metadata = base_ormar_config.metadata
 

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './Workspace.css';
 import { Sidebar } from '@/components/Sidebar/Sidebar.jsx';
 import { EmployeesList } from '@/components/Employees/Employees.jsx';
+import { RequestsList } from '@/components/Requests/Requests.jsx';
 
 export default function Workspace() {
     const [activeTab, changeActiveTab] = useState(localStorage.getItem('activeTab') || null);
@@ -13,7 +14,7 @@ export default function Workspace() {
     const renderContent = () => {
         switch (activeTab) {
           case 'requests':
-            return null;
+            return <RequestsList />;
           case 'dismissals':
             return null;
           case 'employees':
