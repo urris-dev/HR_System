@@ -63,16 +63,6 @@ async def edit_user(user: schemas.UserEdit, Authorize: oauth2.AuthJWT) -> Union[
     return Response(status_code=200)
 
 
-async def delete_user(id: int, Authorize: oauth2.AuthJWT) -> Union[HTTPException, Response]:
-    await check_admin_permissions(Authorize)
-
-    user = await models.User.objects.get(id=id)
-    user.status = False
-    await user.update(["status"])
-
-    return Response(status_code=200)
-
-
 async def login_user(user: schemas.UserLogin, Authorize: oauth2.AuthJWT) -> Union[HTTPException, JSONResponse]:
     try:
         _user = await models.User.objects.get(email=user.email)

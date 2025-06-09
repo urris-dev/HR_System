@@ -21,21 +21,6 @@
     cursor: pointer;
 }
 
-.employees-list__filters {
-    display: flex;
-    gap: 1rem;
-}
-
-.employees-list__filters select {
-    background-color: #004A98;
-    color: #fff;
-    padding: 0.7rem;
-    border-radius: 1.2rem;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-}
-
 .employees-list {
     width: 100%;
     margin-top: 2rem;

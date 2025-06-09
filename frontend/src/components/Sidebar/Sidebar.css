@@ -29,8 +29,8 @@
     width: 100%;
     padding: 1em;
     display: flex;
+    align-items: flex-end;
     gap: 1em;
-    align-items: center;
     color: #000;
     font-weight: bold;
     font-size: 2em;
@@ -45,8 +45,9 @@
     justify-content: space-between;
 }
 
-.profile {
+.logout {
     display: flex;
+    align-items: flex-end;
     width: 100%;
     padding: 1em;
     gap: 1em;
@@ -59,7 +60,7 @@
 }
 
 .option:hover,
-.profile:hover,
+.logout:hover,
 *[clicked] {
     background-color: #e5e5e5;
 }

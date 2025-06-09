@@ -1,12 +1,18 @@
-import React from "react";
+import React, { useEffect } from 'react';
 import CompanyLogo from '@/assets/company.svg';
 import RequestIcon from '@/assets/request.svg';
 import DismissalIcon from '@/assets/dismissal.svg';
 import EmployeesIcon from '@/assets/employees.svg';
-import ProfileIcon from '@/assets/profile.svg';
+import LogoutIcon from '@/assets/logout.svg';
 import './Sidebar.css';
+import { useSidebar } from "@/hooks/sidebar";
 
 export const Sidebar = ({activeTab, changeActiveTab}) => {
+  const { handleLogout, checkLogged } = useSidebar();
+  useEffect(() => 
+    checkLogged()
+  )
+
   const userAccessLevel = localStorage.getItem("userAccessLevel");
 
   function handleOptionClick(tab) {
@@ -35,7 +41,7 @@ export const Sidebar = ({activeTab, changeActiveTab}) => {
                 УВОЛЬНЕНИЯ
               </a>
             </li>
-            {userAccessLevel != "user" &&
+            {userAccessLevel == "Суперадмин" &&
               <li>
                 <a className="option" id="employees" onClick={() => handleOptionClick("employees")}>
                   <img src={EmployeesIcon} alt="/\"/>
@@ -47,9 +53,9 @@ export const Sidebar = ({activeTab, changeActiveTab}) => {
       </div>
       
       <div className="sidebar__footer">
-        <a className="profile" id="profile" onClick={() => handleOptionClick("profile")}>
-          <img src={ProfileIcon} alt="/\"/>
-          <span>ПРОФИЛЬ</span>
+        <a className="logout" id="logout" onClick={handleLogout}>
+          <img src={LogoutIcon} alt="[->"/>
+          <span>ВЫЙТИ</span>
         </a>
       </div>
     </div>

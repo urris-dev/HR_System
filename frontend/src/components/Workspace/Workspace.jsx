@@ -1,15 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './Workspace.css';
 import { Sidebar } from '@/components/Sidebar/Sidebar.jsx';
 import { EmployeesList } from '@/components/Employees/Employees.jsx';
-import { useLogin } from '@/hooks/login.js';
 
 export default function Workspace() {
-    const { checkLogged } = useLogin();
-    // useEffect(() => 
-    //   checkLogged()
-    // )
-
     const [activeTab, changeActiveTab] = useState(localStorage.getItem('activeTab') || null);
     function changeTab(tab) {
       localStorage.setItem('activeTab', tab);

@@ -16,8 +16,6 @@ export const useLogin = () => {
     function checkLogged() {
         if (localStorage.getItem("logged")) {
             navigate("/workspace");
-        } else {
-            navigate("/login");
         }
     }
 

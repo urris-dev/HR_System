@@ -1,7 +1,7 @@
 import { useState } from "react";
 import closeIcon from '@/assets/cross.svg';
 import './EmployeeForm.css';
-import { editEmployee, deleteEmployee } from '@/api/employees.js';
+import { editEmployee } from '@/api/employees.js';
 
 const EditEmployeeForm = ({ onClose, employeeData }) => {
   const [loading, setLoading] = useState(false);
@@ -67,25 +67,6 @@ const EditEmployeeForm = ({ onClose, employeeData }) => {
 
     setLoading(false);
   };
-
-  async function handleDelete(e) {
-    e.preventDefault();
-    setLoading(true);
-    
-    try {
-      await deleteEmployee(formData.id);
-      alert("Сотрудник успешно удалён!");
-      window.location.reload();
-    } catch (err) {
-      if (err.message == 'Unauthorized') {
-        navigate('/login');
-      } else {
-        alert(err.message);
-      }
-    }
-
-    setLoading(false);
-  }
 
   return (
     <div className="employee-modal-overlay">
@@ -176,9 +157,6 @@ const EditEmployeeForm = ({ onClose, employeeData }) => {
           </div>
         <button type="submit" className="submit-btn">
             {loading ? "Загрузка" : "Отредактировать сотрудника"}
-        </button>
-        <button type="reset" className="remove-btn" onClick={handleDelete}>
-            {loading ? "Загрузка" : "Удалить сотрудника"}
         </button>
         </form>
       </div>

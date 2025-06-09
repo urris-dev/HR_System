@@ -45,22 +45,6 @@ export const editEmployee = async (payload, changedFields) => {
   }
 };
 
-export const deleteEmployee = async (id) => {
-  const response = await fetch(`${API_URL}/delete-user?id=${id}`, {
-    method: 'DELETE',
-    credentials: 'include'
-  });
-
-  if (!response.ok) {
-    if (response.status == 401) {
-      await refreshTokens();
-      await deleteEmployee(id);
-      return;
-    }
-    throw new Error((await response.json()).detail);
-  }
-}
-
 export const getEmployees = async () => {
   const response = await fetch(`${API_URL}/users-list`, {
     method: 'GET',

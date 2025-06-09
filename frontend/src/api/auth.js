@@ -16,6 +16,13 @@ export const login = async (email, password) => {
   return response;
 };
 
+export const logout = async () => {
+  await fetch(`${API_URL}/logout`, {
+    method: 'DELETE',
+    credentials: "include",
+  });
+}
+
 export const refreshTokens = async () => {
   const response = await fetch(`${API_URL}/refresh`, {
     method: 'POST',
