@@ -14,6 +14,11 @@ class User(BaseModel):
     factory_name: str
 
 
+class Users(BaseModel):
+    id: int
+    fio: str
+
+
 class UserCreate(BaseModel):
     fio: Annotated[str, Field(max_length=100)]
     email: Annotated[EmailStr, Field(max_length=256)]

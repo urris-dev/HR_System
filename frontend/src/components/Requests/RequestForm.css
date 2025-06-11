@@ -1,4 +1,4 @@
-.employee-modal-overlay {
+.request-modal-overlay {
     position: fixed;
     top: 0;
     right: 0;
@@ -9,7 +9,7 @@
     justify-content: flex-end;
 }
   
-.employee-modal-content {
+.request-modal-content {
     background: white;
     padding: 2rem;
     overflow-y: auto;
@@ -17,10 +17,11 @@
     font-size: 1.5rem;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     gap: 2rem;
 }
   
-.employee-modal-title {
+.request-modal-title {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -34,7 +35,7 @@
     border: none;
 }
 
-.employee-modal-form {
+.request-modal-form {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -51,22 +52,13 @@
 }
   
 .form-group input,
-.form-group select {
+.form-group select,
+.form-group textarea {
     width: 100%;
     padding: 0.5rem;
     border-radius: 1rem;
     font-size: 1.3rem;
     border: 0.1rem solid rgba(102, 102, 102, 0.5);
-}
-
-.form-group span,
-.show-password {
-    font-size: 1rem;
-    color: rgba(28, 29, 34, 0.5);
-}
-
-#showPassword {
-    width: 1rem;
 }
   
 .submit-btn {

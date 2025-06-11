@@ -17,6 +17,11 @@ async def get_users_list(Authorize: oauth2.AuthJWT = Depends()):
     return await services.get_users_list(Authorize)
 
 
+@user_router.get("/users", dependencies=[Depends(check_access_token)], responses={401: {}}, response_model=List[schemas.Users])
+async def get_users():
+    return await services.get_users()
+
+
 @user_router.post("/create-user", dependencies=[Depends(check_access_token)], responses={401: {}, 403: {}, 409: {}})
 async def create_user(user: schemas.UserCreate, Authorize: oauth2.AuthJWT = Depends()):
     return await services.create_user(user, Authorize)

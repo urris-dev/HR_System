@@ -15,6 +15,7 @@ class Request(ormar.Model):
     position: str = ormar.String(nullable=False, max_length=100)
     criticality: bool = ormar.Boolean(nullable=False)
     status: str = ormar.String(nullable=False, max_length=20)
+    department: str = ormar.String(nullable=False, max_length=255)
 
     employee_fio: Optional[str] = ormar.String(nullable=True, max_length=100)
     closing_date: Optional[date] = ormar.Date(nullable=True)

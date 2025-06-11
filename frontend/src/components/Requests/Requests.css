@@ -70,8 +70,15 @@
 
 .requests-list th,
 .requests-list td {
-  padding: 1rem;
-  text-align: left;
+    text-align: left;
+}
+
+.requests-list td {
+    padding: 0.5rem 1rem;
+}
+
+.requests-list th {
+    padding: 1rem;
 }
 
 .requests-list tr {

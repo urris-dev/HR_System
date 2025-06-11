@@ -25,6 +25,10 @@ async def get_users_list(Authorize: oauth2.AuthJWT) -> List[schemas.User]:
     return users
 
 
+async def get_users() -> List[schemas.Users]:
+    return await models.User.objects.all()
+
+
 async def create_user(user: schemas.UserCreate, Authorize: oauth2.AuthJWT) -> Union[HTTPException, Response]:
     await check_admin_permissions(Authorize)
 
