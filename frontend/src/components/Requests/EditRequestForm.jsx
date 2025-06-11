@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import closeIcon from '@/assets/cross.svg';
 import './RequestForm.css';
 import { editRequest } from '@/api/requests.js';
-import { getEmployees } from "@/api/requests.js";
+import { getEmployees, getFactories } from "@/api/data.js";
 
 const EditRequestForm = ({ requestData, onClose }) => {
   const [employees, setEmployees] = useState([]);
+  const [factories, setFactories] = useState([]);
   useEffect(() => {
     const loadData = async () => {
     try {
@@ -15,7 +16,16 @@ const EditRequestForm = ({ requestData, onClose }) => {
                 formData.responsible_id = item.id;
             }
         }
+
+        const resp = await getFactories();
+        for (let item of resp) {
+          if (item.name == requestData.factory_name) {
+              formData.factory_id = item.id;
+          }
+        }
+
         setEmployees(response);        
+        setFactories(resp);        
     } catch (err) {
         if (err.message == 'Unauthorized') {
             navigate('/login');
@@ -35,10 +45,10 @@ const EditRequestForm = ({ requestData, onClose }) => {
     closing_type: requestData.closing_type || "",
     comment: requestData.comment || "",
     department: requestData.department,
-    factory_name: requestData.factory_name,
+    factory_id: "",
     responsible_id: ""
   });
-  const [changedFields, setChangedFields] = useState(["id"]);
+  const [changedFields, setChangedFields] = useState([]);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -52,25 +62,28 @@ const EditRequestForm = ({ requestData, onClose }) => {
     e.preventDefault();
     setLoading(true);
 
-    let payload = new Object();
+    let payload = {id: formData.id};
     for (let key of Object.keys(formData)) {
       if (changedFields.includes(key)) {
         payload[key] = formData[key];
       }
     }
-
-    try {
-      await editRequest(payload, changedFields);
-      alert("Заявка успешно отредактирована!");
-      window.location.reload();
-    } catch (err) {
-      if (err.message == 'Unauthorized') {
-        navigate('/login');
-      } else {
-        alert(err.message);
+    if (Object.keys(payload).length == 1) {
+      alert("Измените хотя бы одно из полей");
+    } else { 
+      try {
+        await editRequest(payload, changedFields);
+        alert("Заявка успешно отредактирована!");
+        window.location.reload();
+      } catch (err) {
+        if (err.message == 'Unauthorized') {
+          navigate('/login');
+        } else {
+          alert(err.message);
         }
+      }
     }
-
+      
     setLoading(false);
   };
 
@@ -88,17 +101,13 @@ const EditRequestForm = ({ requestData, onClose }) => {
             <div className="form-group">
               <label>Завод</label>
               <select
-                name="factory_name"
-                value={formData.factory_name}
+                name="factory_id"
+                value={formData.factory_id}
                 onChange={handleInputChange}
               >
-                  <option value="СЭЗ">СЭЗ</option>
-                  <option value="ЛЭЗ">ЛЭЗ</option>
-                  <option value="ВЭМЗ">ВЭМЗ</option>
-                  <option value="ВЗТО">ВЗТО</option>
-                  <option value="АЛВЭМЗ">АЛВЭМЗ</option>
-                  <option value="ЭЛЕКТРОМАШ">ЭЛЕКТРОМАШ</option>
-                  <option value="СЭЗ-ЭНЕРГО">СЭЗ-ЭНЕРГО</option>
+                {factories.map((fact, index) => (
+                  <option key={index} value={fact.id}>{fact.name}</option>
+                ))}
               </select>
             </div>
           )}

@@ -62,21 +62,3 @@ export const editRequest = async (payload, changedFields) => {
     throw new Error((await response.json()).detail);
   }
 };
-
-export const getEmployees = async () => {
-  const response = await fetch(`http://localhost:8000/api/users/users`, {
-    method: 'GET',
-    credentials: 'include',
-  });
-
-  if (!response.ok) {
-    if (response.status == 401) {
-      await refreshTokens();
-      await getEmployees();
-      return;
-    }
-    throw new Error(response.statusText);
-  }
-
-  return await response.json();
-}

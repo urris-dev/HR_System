@@ -6,6 +6,7 @@ from typing import AsyncIterator
 
 from config import settings
 
+from factories.api import factory_router
 from factories.models import Factory
 
 from users.api import user_router
@@ -52,5 +53,6 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+app.include_router(factory_router)
 app.include_router(user_router)
 app.include_router(request_router)

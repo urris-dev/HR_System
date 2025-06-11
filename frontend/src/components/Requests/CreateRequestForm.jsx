@@ -2,16 +2,24 @@ import { useState, useEffect } from "react";
 import closeIcon from '@/assets/cross.svg';
 import './RequestForm.css';
 import { createRequest } from '@/api/requests.js';
-import { getEmployees } from "@/api/requests.js"
+import { getEmployees, getFactories } from "@/api/data.js"
 
 const CreateRequestForm = ({ onClose }) => {
   const [employees, setEmployees] = useState([]);
+  const [factories, setFactories] = useState([]);
   useEffect(() => {
     const loadData = async () => {
     try {
         const response = await getEmployees();
         formData.responsible_id = response.at(0).id;
+
+        const resp = await getFactories();
+        if (localStorage.getItem("userAccessLevel") != "Пользователь") {
+          formData.factory_id = resp.at(0).id;
+        }
+
         setEmployees(response);        
+        setFactories(resp);        
     } catch (err) {
         if (err.message == 'Unauthorized') {
             navigate('/login');
@@ -25,8 +33,8 @@ const CreateRequestForm = ({ onClose }) => {
   const [formData, setFormData] = useState({
     position: "",
     criticality: "false",
-    responsible_id: "",
-    factory_name: localStorage.getItem("userAccessLevel") != "Пользователь" ? "СЭЗ" : "",
+    responsible_id: 0,
+    factory_id: 0,
     comment: "",
     department: ""
   });
@@ -71,17 +79,13 @@ const CreateRequestForm = ({ onClose }) => {
             <div className="form-group">
               <label>Завод</label>
               <select
-                name="factory_name"
-                value={formData.factory_name}
+                name="factory_id"
+                value={formData.factory_id}
                 onChange={handleInputChange}
               >
-                  <option value="СЭЗ">СЭЗ</option>
-                  <option value="ЛЭЗ">ЛЭЗ</option>
-                  <option value="ВЭМЗ">ВЭМЗ</option>
-                  <option value="ВЗТО">ВЗТО</option>
-                  <option value="АЛВЭМЗ">АЛВЭМЗ</option>
-                  <option value="ЭЛЕКТРОМАШ">ЭЛЕКТРОМАШ</option>
-                  <option value="СЭЗ-ЭНЕРГО">СЭЗ-ЭНЕРГО</option>
+                  {factories.map((fact, index) => (
+                    <option key={index} value={fact.id}>{fact.name}</option>
+                  ))}
               </select>
             </div>
           )}

@@ -1,15 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import closeIcon from '@/assets/cross.svg';
 import './EmployeeForm.css';
 import { createEmployee } from '@/api/employees.js';
+import { getFactories } from '@/api/data.js'
 
 const CreateEmployeeForm = ({ onClose }) => {
+  const [factories, setFactories] = useState([]);
+  useEffect(() => {
+    const loadData = async () => {
+    try {
+        const response = await getFactories();
+        formData.factory_id = response.at(0).id;
+        setFactories(response);
+    } catch (err) {
+        if (err.message == 'Unauthorized') {
+            navigate('/login');
+        }
+    }
+    };
+    loadData();
+  }, []);
+
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fio: "",
     email: "",
     password: "",
-    factory_name: "СЭЗ",
+    factory_id: 0,
     access_level: "Пользователь",
     status: "true",
   });
@@ -109,17 +126,13 @@ const CreateEmployeeForm = ({ onClose }) => {
           <div className="form-group">
             <label>Завод</label>
             <select
-              name="factory_name"
-              value={formData.factory_name}
+              name="factory_id"
+              value={formData.factory_id}
               onChange={handleInputChange}
             >
-                <option value="СЭЗ">СЭЗ</option>
-                <option value="ЛЭЗ">ЛЭЗ</option>
-                <option value="ВЭМЗ">ВЭМЗ</option>
-                <option value="ВЗТО">ВЗТО</option>
-                <option value="АЛВЭМЗ">АЛВЭМЗ</option>
-                <option value="ЭЛЕКТРОМАШ">ЭЛЕКТРОМАШ</option>
-                <option value="СЭЗ-ЭНЕРГО">СЭЗ-ЭНЕРГО</option>
+                {factories.map((fact, index) => (
+                    <option key={index} value={fact.id}>{fact.name}</option>
+                ))}
             </select>
           </div>
           <div className="form-group">
@@ -129,8 +142,8 @@ const CreateEmployeeForm = ({ onClose }) => {
               value={formData.access_level}
               onChange={handleInputChange}
             >
-              <option value="Админ">Админ</option>
               <option value="Пользователь">Пользователь</option>
+              <option value="Админ">Админ</option>
               <option value="Суперадмин">Суперадмин</option>
             </select>
           </div>

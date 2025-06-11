@@ -4,7 +4,6 @@ from typing import List
 
 import oauth2
 from . import models, schemas
-from factories.models import Factory
 from users.models import User
 
 
@@ -25,12 +24,10 @@ async def create_request(request: schemas.RequestCreate, Authorize: oauth2.AuthJ
     params = {"creation_date": date.today(), "editing_date": date.today(),
               "creator_id": user.id, "editor_id": user.id, "status": "Открыта"}
 
-    if request.factory_name == "":
-        request.factory_name = user.factory_name
-    factory = await Factory.objects.get(name=request.factory_name)
-    params["factory_id"] = factory.id
+    if request.factory_id == 0:
+        request.factory_id = user.factory_id.id
 
-    await models.Request.objects.create(**request.model_dump(exclude=["factory_name"]), **params)
+    await models.Request.objects.create(**request.model_dump(), **params)
     return Response(status_code=200)
 
 
@@ -40,12 +37,7 @@ async def edit_request(request: schemas.RequestEdit, Authorize: oauth2.AuthJWT) 
     _request = await models.Request.objects.get(id=request.id)
     
     for field in request.changed_fields:
-        if field == "factory_name":
-            factory = await Factory.objects.get(name=request.factory_name)
-            _request.factory_id = factory.id
-            await _request.update(["factory_id"])
-        else:
-            _request.__setattr__(field, request.__getattribute__(field))
+        _request.__setattr__(field, request.__getattribute__(field))
     
     if "closing_type" in request.changed_fields:
         _request.closing_date = date.today()

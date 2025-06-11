@@ -25,7 +25,7 @@ class UserCreate(BaseModel):
     password: Annotated[str, Field(min_length=8, max_length=60)]
     access_level: Annotated[str, Field(max_length=20)]
     status: bool
-    factory_name: Optional[str] = ""
+    factory_id: Optional[int] = 0
 
 
 class UserEdit(BaseModel):
@@ -35,7 +35,7 @@ class UserEdit(BaseModel):
     password: Annotated[Optional[str], Field(min_length=8, max_length=60)] = ""
     access_level: Annotated[Optional[str], Field(max_length=20)] = ""
     status: Optional[bool] = True 
-    factory_name: Optional[str] = ""
+    factory_id: Optional[int] = 0
     changed_fields: List[str]
 
 

@@ -1,16 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import closeIcon from '@/assets/cross.svg';
 import './EmployeeForm.css';
 import { editEmployee } from '@/api/employees.js';
+import { getFactories } from '@/api/data.js';
 
 const EditEmployeeForm = ({ onClose, employeeData }) => {
+  const [factories, setFactories] = useState([]);
+    useEffect(() => {
+      const loadData = async () => {
+      try {
+          const response = await getFactories();
+          for (let item of response) {
+            if (item.name == employeeData.factory_name) {
+                formData.factory_id = item.id;
+            }
+          }
+          setFactories(response);
+      } catch (err) {
+          if (err.message == 'Unauthorized') {
+              navigate('/login');
+          }
+      }
+      };
+      loadData();
+    }, []);
+
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     id: employeeData.id,
     fio: employeeData.fio,
     email: employeeData.email,
     password: "",
-    factory_name: employeeData.factory_name || "СЭЗ",
+    factory_id: 0,
     access_level: employeeData.access_level,
     status: employeeData.status == "Активный" ? true : false,
   });
@@ -50,15 +71,19 @@ const EditEmployeeForm = ({ onClose, employeeData }) => {
     }
     
     if (validateForm()) {
-        try {
-          await editEmployee(payload, changedFields);
-          alert("Сотрудник успешно отредактирован!");
-          window.location.reload();
-        } catch (err) {
-          if (err.message == 'Unauthorized') {
-            navigate('/login');
-          } else {
-            alert(err.message);
+        if (Object.keys(payload).length == 1) {
+          alert("Измените хотя бы одно из полей");
+        } else {
+          try {
+            await editEmployee(payload, changedFields);
+            alert("Сотрудник успешно отредактирован!");
+            window.location.reload();
+          } catch (err) {
+            if (err.message == 'Unauthorized') {
+              navigate('/login');
+            } else {
+              alert(err.message);
+            }
           }
         }
     } else {
@@ -119,17 +144,13 @@ const EditEmployeeForm = ({ onClose, employeeData }) => {
           <div className="form-group">
             <label>Завод</label>
             <select
-              name="factory_name"
-              value={formData.factory_name}
+              name="factory_id"
+              value={formData.factory_id}
               onChange={handleInputChange}
             >
-                <option value="СЭЗ">СЭЗ</option>
-                <option value="ЛЭЗ">ЛЭЗ</option>
-                <option value="ВЭМЗ">ВЭМЗ</option>
-                <option value="ВЗТО">ВЗТО</option>
-                <option value="АЛВЭМЗ">АЛВЭМЗ</option>
-                <option value="ЭЛЕКТРОМАШ">ЭЛЕКТРОМАШ</option>
-                <option value="СЭЗ-ЭНЕРГО">СЭЗ-ЭНЕРГО</option>
+                {factories.map((fact, index) => (
+                    <option key={index} value={fact.id}>{fact.name}</option>
+                ))}
             </select>
           </div>
           <div className="form-group">
@@ -139,8 +160,8 @@ const EditEmployeeForm = ({ onClose, employeeData }) => {
               value={formData.access_level}
               onChange={handleInputChange}
             >
-              <option value="Админ">Админ</option>
               <option value="Пользователь">Пользователь</option>
+              <option value="Админ">Админ</option>
               <option value="Суперадмин">Суперадмин</option>
             </select>
           </div>

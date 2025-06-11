@@ -5,7 +5,6 @@ from typing import Union, List
 import oauth2
 from config import settings
 from . import models, schemas, utils
-from factories.models import Factory
 
 
 JWT_ACCESS_TOKEN_EXPIRES_IN = settings.JWT_ACCESS_TOKEN_EXPIRES_IN * 60
@@ -26,7 +25,7 @@ async def get_users_list(Authorize: oauth2.AuthJWT) -> List[schemas.User]:
 
 
 async def get_users() -> List[schemas.Users]:
-    return await models.User.objects.all()
+    return await models.User.objects.exclude(email=settings.ADMIN_EMAIL).all()
 
 
 async def create_user(user: schemas.UserCreate, Authorize: oauth2.AuthJWT) -> Union[HTTPException, Response]:
@@ -40,11 +39,10 @@ async def create_user(user: schemas.UserCreate, Authorize: oauth2.AuthJWT) -> Un
     except: pass
 
     hashed_password = await utils.hash_data(user.password)
-    _user = await models.User.objects.create(**user.model_dump(exclude={"password", "factory_name"}), password=hashed_password)    
-    if user.access_level == "Пользователь":
-        factory = await Factory.objects.get(name=user.factory_name)
-        _user.factory_id = factory.id
-        await _user.update(["factory_id"])
+    if user.access_level != "Пользователь":
+        await models.User.objects.create(**user.model_dump(exclude={"password", "factory_id"}), password=hashed_password)    
+    else:
+        await models.User.objects.create(**user.model_dump(exclude={"password"}), password=hashed_password)    
 
     return Response(status_code=200)
 
@@ -56,10 +54,6 @@ async def edit_user(user: schemas.UserEdit, Authorize: oauth2.AuthJWT) -> Union[
     for field in user.changed_fields:
         if field == "password":
             _user.password = await utils.hash_data(user.password)
-        elif field == "factory_name":
-            factory = await Factory.objects.get(name=user.factory_name)
-            _user.factory_id = factory.id
-            await _user.update(["factory_id"])
         else:
             _user.__setattr__(field, user.__getattribute__(field))
     await _user.update(user.changed_fields)

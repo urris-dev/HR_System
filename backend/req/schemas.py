@@ -27,7 +27,7 @@ class RequestCreate(BaseModel):
     position: Annotated[str, Field(max_length=100)]
     criticality: bool
     department: Annotated[str, Field(max_length=255)]
-    factory_name: Optional[str] = ""
+    factory_id: Optional[int] = 0
     responsible_id: int
     comment: Annotated[Optional[str], Field(max_length=200)] = ""
 
@@ -41,6 +41,6 @@ class RequestEdit(BaseModel):
     employee_fio: Annotated[Optional[str], Field(max_length=100)] = ""
     closing_type: Annotated[Optional[str], Field(max_length=20)] = ""
     comment: Annotated[Optional[str], Field(max_length=200)] = ""
-    factory_name: Optional[str] = ""
+    factory_id: Optional[int] = 0
     responsible_id: Optional[int] = 0
     changed_fields: List[str]
