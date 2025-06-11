@@ -54,8 +54,7 @@ export const getEmployees = async () => {
   if (!response.ok) {
     if (response.status == 401) {
       await refreshTokens();
-      await getEmployees();
-      return;
+      return await getEmployees();
     }
     throw new Error(response.statusText);
   }

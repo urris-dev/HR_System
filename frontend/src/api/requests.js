@@ -2,17 +2,23 @@ import { refreshTokens } from './auth.js';
 
 const API_URL = 'http://localhost:8000/api/requests';
 
-export const getRequests = async () => {
+export const getRequests = async (filters, filterableFields) => {
   const response = await fetch(`${API_URL}/requests-list`, {
-    method: 'GET',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
     credentials: 'include',
+    body: JSON.stringify({
+      ...filters,
+      filterable_fields: new Array(...filterableFields)
+    })
   });
 
   if (!response.ok) {
     if (response.status == 401) {
       await refreshTokens();
-      await getRequests();
-      return;
+      return await getRequests(filters, filterableFields);
     }
     throw new Error(response.statusText);
   }

@@ -12,6 +12,9 @@ export const RequestsList = () => {
         openCreateModal,
         openEditModal,
         closeModal,
+        handleFilterChange,
+        handleApplyFilters,
+        handleResetFilters
     } = useRequests();
 
     return <>
@@ -21,12 +24,12 @@ export const RequestsList = () => {
         </div>
         <form className="requests-list__filters">
             <div className="filters__position-search">
-                <input type="text" placeholder="Название должности"/>
-                <button>Поиск</button>
+                <input type="text" name="position" placeholder="Название должности" onChange={handleFilterChange}/>
+                <button onClick={handleApplyFilters}>Поиск</button>
             </div>
             <div className="filters__categories">
                 {localStorage.getItem("userAccessLevel") != "Пользователь" && (
-                    <select name="factory_name">
+                    <select name="factory_name" onChange={handleFilterChange}>
                     <option selected disabled>Завод</option>
                     <option value="СЭЗ">СЭЗ</option>
                     <option value="ЛЭЗ">ЛЭЗ</option>
@@ -37,19 +40,19 @@ export const RequestsList = () => {
                     <option value="СЭЗ-ЭНЕРГО">СЭЗ-ЭНЕРГО</option>
                 </select>
                 )}
-                <select name="criticality">
+                <select name="criticality" onChange={handleFilterChange}>
                     <option selected disabled>Критичность</option>
                     <option value="false">Низкая</option>
                     <option value="true">Высокая</option>
                 </select>
-                <select name="status">
+                <select name="status" onChange={handleFilterChange}>
                     <option selected disabled>Статус</option>
                     <option value="Открыта">Открыта</option>
                     <option value="В работе">В работе</option>
                     <option value="Закрыта">Закрыта</option>
                 </select>
-                <button className="apply-filters">Применить фильтр</button>
-                <button className="reset-filters">Сбросить фильтр</button>
+                <button className="apply-filters" onClick={handleApplyFilters}>Применить фильтры</button>
+                <button className="reset-filters" onClick={handleResetFilters}>Сбросить фильтры</button>
             </div>
         </form>
         <table className="requests-list">

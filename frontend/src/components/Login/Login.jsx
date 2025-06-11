@@ -53,7 +53,7 @@ export default function LoginForm() {
                         {loading ? <p>Загрузка...</p> : <p>Войти в аккаунт</p>}
                     </button>
                 </form>
-                <div className="company-logo">
+                <div className="login-form__company-logo">
                     <img src={CompanyLogo}/>
                 </div>
             </div>

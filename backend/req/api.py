@@ -14,9 +14,9 @@ request_router = APIRouter(
 )
 
 
-@request_router.get("/requests-list", response_model=List[schemas.Request])
-async def get_requests_list(Authorize: oauth2.AuthJWT = Depends()):
-    return await services.get_requests_list(Authorize)
+@request_router.post("/requests-list", response_model=List[schemas.Request])
+async def get_requests_list(filters: schemas.Filter, Authorize: oauth2.AuthJWT = Depends()):
+    return await services.get_requests_list(filters, Authorize)
 
 
 @request_router.post("/create-request")

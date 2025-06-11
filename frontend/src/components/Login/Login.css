@@ -62,7 +62,7 @@
     font-weight: bold;
 }
 
-.company-logo {
+.login-form__company-logo {
     display: flex;
     align-items: center;
     justify-content: center;

@@ -7,14 +7,28 @@ from . import models, schemas
 from users.models import User
 
 
-async def get_requests_list(Authorize: oauth2.AuthJWT) -> List[schemas.Request]:
+async def get_requests_list(filters: schemas.Filter, Authorize: oauth2.AuthJWT) -> List[schemas.Request]:
     email = Authorize.get_jwt_subject()
     user = await User.objects.get(email=email)
 
     if user.access_level != "Пользователь":
-        return await models.Request.objects.select_related("factory_id").select_related('responsible_id').all()
+        requests = models.Request.objects.select_related(["factory_id", "responsible_id"])
     else:
-        return await models.Request.objects.select_related(["factory_id", 'responsible_id']).filter(factory_id=user.factory_id).all()
+        requests = models.Request.objects.select_related(["factory_id", "responsible_id"]).filter(factory_id=user.factory_id)
+
+    if "factory_name" in filters.filterable_fields:
+        requests = requests.filter(factory_id__name=filters.factory_name)
+
+    if "criticality" in filters.filterable_fields:
+        requests = requests.filter(criticality=filters.criticality)
+
+    if "status" in filters.filterable_fields:
+        requests = requests.filter(status=filters.status)
+    
+    if "position" in filters.filterable_fields:
+        requests = requests.filter(position__icontains=filters.position)
+
+    return await requests.all()
 
     
 async def create_request(request: schemas.RequestCreate, Authorize: oauth2.AuthJWT) -> Response:

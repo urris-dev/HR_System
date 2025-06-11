@@ -9,8 +9,7 @@ export const getEmployees = async () => {
     if (!response.ok) {
       if (response.status == 401) {
         await refreshTokens();
-        await getEmployees();
-        return;
+        return await getEmployees();
       }
       throw new Error(response.statusText);
     }
@@ -27,8 +26,7 @@ export const getFactories = async () => {
     if (!response.ok) {
       if (response.status == 401) {
         await refreshTokens();
-        await getFactories();
-        return;
+        return await getFactories();
       }
       throw new Error(response.statusText);
     }

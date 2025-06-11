@@ -5,15 +5,19 @@
     flex-direction: column;
     justify-content: space-between;
     padding: 3em;
-    background-color: #F7F7F7;
+    background-color: #e5e5e5;
 }
 
 .sidebar__header {
     display: flex;
     align-self: stretch;
-    align-items: flex-start;
+    align-items: center;
     flex-direction: column;
     gap: 2em;
+}
+
+.company-logo img {
+    height: 4rem;
 }
 
 .sidebar__options {
@@ -62,5 +66,5 @@
 .option:hover,
 .logout:hover,
 *[clicked] {
-    background-color: #e5e5e5;
+    background-color: #d5d5d5;
 }

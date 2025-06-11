@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import CompanyLogo from '@/assets/company.svg';
+import CompanyLogo from '@/assets/company-logo.svg';
 import RequestIcon from '@/assets/request.svg';
 import DismissalIcon from '@/assets/dismissal.svg';
 import EmployeesIcon from '@/assets/employees.svg';
@@ -30,22 +30,19 @@ export const Sidebar = ({activeTab, changeActiveTab}) => {
         
         <ul className="sidebar__options">
             <li>
-              <a className="option" id="requests" onClick={() => handleOptionClick("requests")}>
+              <a className="option" id="requests" onClick={() => handleOptionClick("requests")} title='ЗАЯВКИ'>
                 <img src={RequestIcon} alt="+"/>
-                ЗАЯВКИ
               </a>
             </li>
             <li>
-              <a className="option" id="dismissals" onClick={() => handleOptionClick("dismissals")}>
+              <a className="option" id="dismissals" onClick={() => handleOptionClick("dismissals")} title='УВОЛЬНЕНИЯ'>
                 <img src={DismissalIcon} alt="-"/>
-                УВОЛЬНЕНИЯ
               </a>
             </li>
             {userAccessLevel == "Суперадмин" &&
               <li>
-                <a className="option" id="employees" onClick={() => handleOptionClick("employees")}>
+                <a className="option" id="employees" onClick={() => handleOptionClick("employees")} title='СОТРУДНИКИ'>
                   <img src={EmployeesIcon} alt="/\"/>
-                  СОТРУДНИКИ
                 </a>
               </li>
             }
@@ -53,9 +50,8 @@ export const Sidebar = ({activeTab, changeActiveTab}) => {
       </div>
       
       <div className="sidebar__footer">
-        <a className="logout" id="logout" onClick={handleLogout}>
+        <a className="logout" id="logout" onClick={handleLogout} title='ВЫХОД'>
           <img src={LogoutIcon} alt="[->"/>
-          <span>ВЫЙТИ</span>
         </a>
       </div>
     </div>

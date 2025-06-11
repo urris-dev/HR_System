@@ -1,6 +1,6 @@
 from datetime import date
 from pydantic import BaseModel, Field
-from typing import Annotated, Optional, List
+from typing import Annotated, Optional, List, Set
 
 
 class Request(BaseModel):
@@ -44,3 +44,11 @@ class RequestEdit(BaseModel):
     factory_id: Optional[int] = 0
     responsible_id: Optional[int] = 0
     changed_fields: List[str]
+
+
+class Filter(BaseModel):
+    position: Optional[str] = ""
+    factory_name: Optional[str] = ""
+    criticality: Optional[bool] = False
+    status: Optional[str] = ""
+    filterable_fields: Set[str]
