@@ -17,6 +17,7 @@ class Request(ormar.Model):
     status: str = ormar.String(nullable=False, max_length=20)
     department: str = ormar.String(nullable=False, max_length=255)
 
+    hiring_form: Optional[str] = ormar.String(nullable=True, max_length=100)
     employee_fio: Optional[str] = ormar.String(nullable=True, max_length=100)
     closing_date: Optional[date] = ormar.Date(nullable=True)
     closing_type: Optional[str] = ormar.String(nullable=True, max_length=20)

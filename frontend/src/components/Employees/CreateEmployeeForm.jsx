@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import closeIcon from '@/assets/cross.svg';
 import './EmployeeForm.css';
 import { createEmployee } from '@/api/employees.js';
 import { getFactories } from '@/api/data.js'
 
 const CreateEmployeeForm = ({ onClose }) => {
+  let navigate = useNavigate();
   const [factories, setFactories] = useState([]);
   useEffect(() => {
     const loadData = async () => {

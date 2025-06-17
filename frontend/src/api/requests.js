@@ -55,7 +55,7 @@ export const editRequest = async (payload, changedFields) => {
     credentials: 'include',
     body: JSON.stringify({
       ...payload,
-      changed_fields: changedFields
+      changed_fields: new Array(...changedFields)
     }),
   });
 

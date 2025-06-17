@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import closeIcon from '@/assets/cross.svg';
 import './RequestForm.css';
 import { createRequest } from '@/api/requests.js';
 import { getEmployees, getFactories } from "@/api/data.js"
 
 const CreateRequestForm = ({ onClose }) => {
+  let navigate = useNavigate();
   const [employees, setEmployees] = useState([]);
   const [factories, setFactories] = useState([]);
   useEffect(() => {
@@ -46,10 +48,22 @@ const CreateRequestForm = ({ onClose }) => {
     });
   };
 
+  function validateForm() {
+    let positionValidate = formData.position.length <= 100;
+    let departmentValidate = formData.department.length <= 256;
+
+    return positionValidate && departmentValidate;
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
-    setLoading(true);
+    
+    if (!validateForm()) {
+      alert("Ошибка длины входных данных");
+      return;
+    } 
 
+    setLoading(true);
     try {
       await createRequest(formData);
       alert("Заявка успешно создана!");

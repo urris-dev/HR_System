@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 
 import { getEmployees } from "@/api/employees.js";
 
 export const useEmployees = () => {
+    let navigate = useNavigate();
     const [employees, setEmployees] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingEmployee, setEditingEmployee] = useState(null);

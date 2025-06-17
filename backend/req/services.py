@@ -53,7 +53,7 @@ async def edit_request(request: schemas.RequestEdit, Authorize: oauth2.AuthJWT) 
     for field in request.changed_fields:
         _request.__setattr__(field, request.__getattribute__(field))
     
-    if "closing_type" in request.changed_fields:
+    if request.status == 'Закрыта':
         _request.closing_date = date.today()
         request.changed_fields.append("closing_date")
     

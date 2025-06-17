@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 import { getRequests } from "@/api/requests.js";
 
 export const useRequests = () => {
+    let navigate = useNavigate();
     const [requests, setRequests] = useState([]);    
     const [filters, setFilters] = useState({});
     const [filterableFields, setFilterableFields] = useState(new Set());

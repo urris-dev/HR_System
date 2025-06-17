@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import closeIcon from '@/assets/cross.svg';
 import './EmployeeForm.css';
 import { editEmployee } from '@/api/employees.js';
 import { getFactories } from '@/api/data.js';
 
 const EditEmployeeForm = ({ onClose, employeeData }) => {
+  let navigate = useNavigate();
   const [factories, setFactories] = useState([]);
     useEffect(() => {
       const loadData = async () => {
@@ -56,7 +58,7 @@ const EditEmployeeForm = ({ onClose, employeeData }) => {
     if (changedFields.includes("email")) {emailValidate = formData.email.length <= 256};
     if (changedFields.includes("password")) {passwordValidate = formData.password.length >= 8 && formData.password.length <= 60};
 
-    return (fioValidate || true) && (emailValidate || true) && (passwordValidate || true);
+    return fioValidate || emailValidate || passwordValidate;
   }
 
   async function handleSubmit(e) {

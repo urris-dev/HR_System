@@ -1,17 +1,16 @@
 version: '3.8'
 
 services:
-  db:
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: ruselprom
+  superset:
+    image: apache/superset:latest
+    container_name: superset
     ports:
-      - "15432:5432"
+      - "8088:8088"
+    environment:
+      - SUPERSET_SECRET_KEY=4Uh9ApgvB1TWpAJL/DQ+KbeAjTTYlfs1l7+d3n4ZViPIi9U2sBwKfeOm
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - superset_data:/app/superset
+    command: ["sh", "-c", "pip install psycopg2-binary pillow && superset fab create-admin --username admin --password admin --email admin@example.com --firstname Admin --lastname User && superset db upgrade && superset init && superset run -p 8088 --host 0.0.0.0 --with-threads"]
 
 volumes:
-  pgdata:
+  superset_data:

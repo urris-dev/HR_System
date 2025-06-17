@@ -8,6 +8,7 @@ class Request(BaseModel):
     position: str
     criticality: bool
     status: str
+    hiring_form: Optional[str]
     employee_fio: Optional[str]
     creation_date: date
     closing_date: Optional[date]
@@ -38,6 +39,7 @@ class RequestEdit(BaseModel):
     criticality: Optional[bool] = ""
     status: Annotated[Optional[str], Field(max_length=20)] = ""
     department: Annotated[Optional[str], Field(max_length=255)] = ""
+    hiring_form: Annotated[Optional[str], Field(max_length=100)] = ""
     employee_fio: Annotated[Optional[str], Field(max_length=100)] = ""
     closing_type: Annotated[Optional[str], Field(max_length=20)] = ""
     comment: Annotated[Optional[str], Field(max_length=200)] = ""

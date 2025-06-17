@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import closeIcon from '@/assets/cross.svg';
 import './RequestForm.css';
 import { editRequest } from '@/api/requests.js';
 import { getEmployees, getFactories } from "@/api/data.js";
 
 const EditRequestForm = ({ requestData, onClose }) => {
+  let navigate = useNavigate();
   const [employees, setEmployees] = useState([]);
   const [factories, setFactories] = useState([]);
   useEffect(() => {
@@ -41,47 +43,83 @@ const EditRequestForm = ({ requestData, onClose }) => {
     position: requestData.position,
     criticality: requestData.criticality == "Низкая" ? "false" : "true",
     status: requestData.status,
+    hiring_form: requestData.hiring_form || "Штат",
     employee_fio: requestData.employee_fio || "",
-    closing_type: requestData.closing_type || "",
+    closing_type: requestData.closing_type || "Найм",
     comment: requestData.comment || "",
     department: requestData.department,
     factory_id: "",
     responsible_id: ""
   });
-  const [changedFields, setChangedFields] = useState([]);
+  const [changedFields, setChangedFields] = useState(new Set());
 
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
-    setChangedFields(changedFields.concat([e.target.name]));
+    setChangedFields(changedFields.add(e.target.name));
   };
+
+  const handleStatusChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+
+    if (e.target.value != 'Открыта') {
+      setChangedFields(changedFields.add('status'));
+      setChangedFields(changedFields.add('closing_type'));
+      setChangedFields(changedFields.add('hiring_form'));
+      document.getElementsByName('employee_fio').item(0).setAttribute("required", "");
+    } else {
+      setChangedFields(changedFields.add('status'));
+      changedFields.delete('closing_type');
+      changedFields.delete('hiring_form');
+      document.getElementsByName('employee_fio').item(0).removeAttribute("required");
+    }
+  }
+
+  function validateForm() {
+    let positionValidate, departmentValidate, employeeValidate;
+    if (changedFields.has("position")) {positionValidate = formData.position.length <= 100;}
+    if (changedFields.has("department")) {departmentValidate = formData.department.length <= 256;}
+    if (changedFields.has("employee_fio")) {employeeValidate = formData.employee_fio.length <= 100;}
+
+    return positionValidate || departmentValidate || employeeValidate;
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setLoading(true);
 
+    if (!validateForm()) {
+      alert("Ошибка входных данных");
+      return;
+    }
+
+    if (changedFields.size == 0) {
+      alert("Измените хотя бы одно из полей");
+      return;
+    }
+
+    setLoading(true);
     let payload = {id: formData.id};
     for (let key of Object.keys(formData)) {
-      if (changedFields.includes(key)) {
+      if (changedFields.has(key)) {
         payload[key] = formData[key];
       }
     }
-    if (Object.keys(payload).length == 1) {
-      alert("Измените хотя бы одно из полей");
-    } else { 
-      try {
+
+    try {
         await editRequest(payload, changedFields);
         alert("Заявка успешно отредактирована!");
         window.location.reload();
-      } catch (err) {
+    } catch (err) {
         if (err.message == 'Unauthorized') {
           navigate('/login');
         } else {
           alert(err.message);
         }
-      }
     }
       
     setLoading(false);
@@ -147,11 +185,22 @@ const EditRequestForm = ({ requestData, onClose }) => {
             <select
               name="status"
               value={formData.status}
-              onChange={handleInputChange}
+              onChange={handleStatusChange}
             >
               <option value="Открыта">Открыта</option>
               <option value="В работе">В работе</option>
               <option value="Закрыта">Закрыта</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label>Форма найма</label>
+            <select
+              name="hiring_form"
+              value={formData.hiring_form}
+              onChange={handleInputChange}
+            >
+              <option value="Штат">Штат</option>
+              <option value="Договор ГПХ">Договор ГПХ</option>
             </select>
           </div>
           <div className="form-group">
