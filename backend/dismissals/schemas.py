@@ -1,21 +1,21 @@
 from datetime import date
 from pydantic import BaseModel, Field
-from typing import Annotated, Optional, List, Set
+from typing import Annotated, Optional, Set
 
 
-class Request(BaseModel):
+class Dismissal(BaseModel):
     id: int
     position: str
     criticality: bool
-    status: str
-    hiring_form: Optional[str]
-    employee_fio: Optional[str]
+    hiring_form: str
+    employee_fio: str
     creation_date: date
-    closing_date: Optional[date]
-    comment: Optional[str]
+    dismissal_date: date
+    dismissal_reason: str 
     factory_name: str
     department: str
     responsible_name: str
+    comment: Optional[str]
     
     class Config:
         json_encoders = {
@@ -23,32 +23,36 @@ class Request(BaseModel):
         }
 
 
-class RequestCreate(BaseModel):
+class DismissalCreate(BaseModel):
     position: Annotated[str, Field(max_length=100)]
     criticality: bool
-    department: Annotated[str, Field(max_length=255)]
+    hiring_form: Annotated[str, Field(max_length=100)]
+    employee_fio: Annotated[str, Field(max_length=100)]
+    dismissal_date: date
+    dismissal_reason: Annotated[str, Field(max_length=100)]
     factory_id: Optional[int] = 0
+    department: Annotated[str, Field(max_length=255)]
     responsible_id: int
-    comment: Annotated[Optional[str], Field(max_length=200)] = ""
+    comment: Optional[Annotated[str, Field(max_length=200)]] = ""
 
 
-class RequestEdit(BaseModel):
+class DismissalEdit(BaseModel):
     id: int
     position: Annotated[Optional[str], Field(max_length=100)] = ""
     criticality: Optional[bool] = ""
-    status: Annotated[Optional[str], Field(max_length=20)] = ""
-    department: Annotated[Optional[str], Field(max_length=255)] = ""
     hiring_form: Annotated[Optional[str], Field(max_length=100)] = ""
     employee_fio: Annotated[Optional[str], Field(max_length=100)] = ""
-    comment: Annotated[Optional[str], Field(max_length=200)] = ""
+    dismissal_date: Optional[date] = date.today()
+    dismissal_reason: Optional[Annotated[str, Field(max_length=100)]] = ""
     factory_id: Optional[int] = 0
+    department: Annotated[Optional[str], Field(max_length=255)] = ""
     responsible_id: Optional[int] = 0
-    changed_fields: List[str]
+    comment: Annotated[Optional[str], Field(max_length=200)] = ""
+    changed_fields: Set[str]
 
 
 class Filter(BaseModel):
-    position: Optional[str] = ""
     factory_name: Optional[str] = ""
     criticality: Optional[bool] = False
-    status: Optional[str] = ""
+    position: Optional[str] = ""
     filterable_fields: Set[str]

@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import closeIcon from '@/assets/cross.svg';
-import './RequestForm.css';
-import { editRequest } from '@/api/requests.js';
+import './DismissalForm.css';
+import { editDismissal } from '@/api/dismissals.js';
 import { getEmployees, getFactories } from "@/api/data.js";
 
-const EditRequestForm = ({ requestData, onClose }) => {
+const EditRequestForm = ({ dismissalData, onClose }) => {
   let navigate = useNavigate();
   const [employees, setEmployees] = useState([]);
   const [factories, setFactories] = useState([]);
@@ -14,14 +14,14 @@ const EditRequestForm = ({ requestData, onClose }) => {
     try {
         const response = await getEmployees();
         for (let item of response) {
-            if (item.fio == requestData.responsible_name) {
+            if (item.fio == dismissalData.responsible_name) {
                 formData.responsible_id = item.id;
             }
         }
 
         const resp = await getFactories();
         for (let item of resp) {
-          if (item.name == requestData.factory_name) {
+          if (item.name == dismissalData.factory_name) {
               formData.factory_id = item.id;
           }
         }
@@ -38,17 +38,20 @@ const EditRequestForm = ({ requestData, onClose }) => {
   }, []);
 
   const [loading, setLoading] = useState(false);
+  const [day, month, year] = dismissalData.dismissal_date.split(".");
+  const isoDate = `${year}-${month}-${day}`;
   const [formData, setFormData] = useState({
-    id: requestData.id,
-    position: requestData.position,
-    criticality: requestData.criticality == "Низкая" ? "false" : "true",
-    status: requestData.status,
-    hiring_form: requestData.hiring_form || "Штат",
-    employee_fio: requestData.employee_fio || "",
-    comment: requestData.comment || "",
-    department: requestData.department,
+    id: dismissalData.id,
     factory_id: "",
-    responsible_id: ""
+    department: dismissalData.department,
+    position: dismissalData.position,
+    criticality: dismissalData.criticality == "Низкая" ? "false" : "true",
+    hiring_form: dismissalData.hiring_form,
+    dismissal_date: isoDate,
+    employee_fio: dismissalData.employee_fio,
+    dismissal_reason: dismissalData.dismissal_reason,
+    responsible_id: "",
+    comment: dismissalData.comment || "",
   });
   const [changedFields, setChangedFields] = useState(new Set());
 
@@ -60,37 +63,22 @@ const EditRequestForm = ({ requestData, onClose }) => {
     setChangedFields(changedFields.add(e.target.name));
   };
 
-  const handleStatusChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-
-    if (e.target.value != 'Открыта') {
-      setChangedFields(changedFields.add('status'));
-      setChangedFields(changedFields.add('hiring_form'));
-      document.getElementsByName('employee_fio').item(0).setAttribute("required", "");
-    } else {
-      setChangedFields(changedFields.add('status'));
-      changedFields.delete('hiring_form');
-      document.getElementsByName('employee_fio').item(0).removeAttribute("required");
-    }
-  }
-
   function validateForm() {
-    let positionValidate, departmentValidate, employeeValidate;
-    if (changedFields.has("position")) {positionValidate = formData.position.length <= 100;}
-    if (changedFields.has("department")) {departmentValidate = formData.department.length <= 256;}
-    if (changedFields.has("employee_fio")) {employeeValidate = formData.employee_fio.length <= 100;}
+    let departmentValidate, positionValidate, employeeValidate, dismissalValidate;
 
-    return [positionValidate, departmentValidate, employeeValidate].every(st => st == true || st == undefined);
+    if (changedFields.has("department")) {departmentValidate = formData.department.length <= 256;}
+    if (changedFields.has("position")) {positionValidate = formData.position.length <= 100;}
+    if (changedFields.has("employee_fio")) {employeeValidate = formData.employee_fio.length <= 100;}
+    if (changedFields.has("dismissal_reason")) {dismissalValidate = formData.dismissal_reason.length <= 100;}
+
+    return [departmentValidate, positionValidate, employeeValidate, dismissalValidate].every(st => st == true || st == undefined);
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
 
     if (!validateForm()) {
-      alert("Ошибка входных данных");
+      alert("Ошибка длины входных данных");
       return;
     }
 
@@ -108,8 +96,8 @@ const EditRequestForm = ({ requestData, onClose }) => {
     }
 
     try {
-        await editRequest(payload, changedFields);
-        alert("Заявка успешно отредактирована!");
+        await editDismissal(payload, changedFields);
+        alert("Увольнение успешно отредактировано!");
         window.location.reload();
     } catch (err) {
         if (err.message == 'Unauthorized') {
@@ -123,15 +111,15 @@ const EditRequestForm = ({ requestData, onClose }) => {
   };
 
   return (
-    <div className="request-modal-overlay">
-      <div className="request-modal-content">
-        <div className="request-modal-title">
-            <span>Редактирование заявки</span>
+    <div className="dismissal-modal-overlay">
+      <div className="dismissal-modal-content">
+        <div className="dismissal-modal-title">
+            <span>Редактирование увольнения</span>
             <button className="close-btn" onClick={onClose}>
                 <img src={closeIcon} alt="x"/>
             </button>
         </div>
-        <form className="request-modal-form" onSubmit={handleSubmit} id="request-modal-form">
+        <form className="dismissal-modal-form" onSubmit={handleSubmit} id="dismissal-modal-form">
           {localStorage.getItem("userAccessLevel") != "Пользователь" && (
             <div className="form-group">
               <label>Завод</label>
@@ -140,9 +128,9 @@ const EditRequestForm = ({ requestData, onClose }) => {
                 value={formData.factory_id}
                 onChange={handleInputChange}
               >
-                {factories.map((fact, index) => (
-                  <option key={index} value={fact.id}>{fact.name}</option>
-                ))}
+                  {factories.map((fact, index) => (
+                    <option key={index} value={fact.id}>{fact.name}</option>
+                  ))}
               </select>
             </div>
           )}
@@ -178,18 +166,6 @@ const EditRequestForm = ({ requestData, onClose }) => {
             </select>
           </div>
           <div className="form-group">
-            <label>Статус</label>
-            <select
-              name="status"
-              value={formData.status}
-              onChange={handleStatusChange}
-            >
-              <option value="Открыта">Открыта</option>
-              <option value="В работе">В работе</option>
-              <option value="Закрыта">Закрыта</option>
-            </select>
-          </div>
-          <div className="form-group">
             <label>Форма найма</label>
             <select
               name="hiring_form"
@@ -201,12 +177,33 @@ const EditRequestForm = ({ requestData, onClose }) => {
             </select>
           </div>
           <div className="form-group">
-            <label>ФИО нанятого работника</label>
+            <label>Дата увольнения</label>
+            <input
+              type="date"
+              name="dismissal_date"
+              value={formData.dismissal_date}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>ФИО увольняемого работника</label>
             <input
               type="text"
               name="employee_fio"
               value={formData.employee_fio}
               onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Причина увольнения</label>
+            <input
+              type="text"
+              name="dismissal_reason"
+              value={formData.dismissal_reason}
+              onChange={handleInputChange}
+              required
             />
           </div>
           <div className="form-group">
@@ -230,8 +227,8 @@ const EditRequestForm = ({ requestData, onClose }) => {
             </textarea>
           </div>
         </form>
-        <button type="submit" className="submit-btn" form="request-modal-form">
-          {loading ? "Загрузка..." : "Отредактировать заявку"}
+        <button type="submit" className="submit-btn" form="dismissal-modal-form">
+          {loading ? "Загрузка..." : "Отредактировать увольнение"}
         </button>
       </div>
     </div>

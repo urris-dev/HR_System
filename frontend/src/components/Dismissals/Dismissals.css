@@ -1,16 +1,16 @@
-.requests-list__title {
+.dismissals-list__title {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
     padding-bottom: 2rem;
 }
 
-.requests-list__title span {
+.dismissals-list__title span {
     font-size: 3rem;
     font-weight: bold;
 }
 
-.add-request-btn {
+.add-dismissal-btn {
     background-color: #004A98;
     color: #fff;
     padding: 0.8rem;
@@ -21,7 +21,7 @@
     cursor: pointer;
 }
 
-.requests-list__filters {
+.dismissals-list__filters {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -47,8 +47,8 @@
     gap: 1rem;
 }
 
-.requests-list__filters select,
-.requests-list__filters button {
+.dismissals-list__filters select,
+.dismissals-list__filters button {
     display: flex;
     align-items: center;
     background-color: #004A98;
@@ -61,7 +61,7 @@
     cursor: pointer;
 }
 
-.requests-list {
+.dismissals-list {
     width: 100%;
     margin-top: 2rem;
     border-radius: 1rem;
@@ -70,20 +70,20 @@
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
-.requests-list th,
-.requests-list td {
+.dismissals-list th,
+.dismissals-list td {
     text-align: left;
 }
 
-.requests-list td {
+.dismissals-list td {
     padding: 0.5rem 1rem;
 }
 
-.requests-list th {
+.dismissals-list th {
     padding: 1rem;
 }
 
-.requests-list tr {
+.dismissals-list tr {
     cursor: pointer;
 }
 
@@ -92,8 +92,7 @@
     text-align: center;
 }
 
-.request-criticality,
-.request-status {
+.dismissal-criticality {
     text-align: center;
     padding: 1rem;
     border-radius: 2rem;

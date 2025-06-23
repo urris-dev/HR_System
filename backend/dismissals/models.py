@@ -6,26 +6,26 @@ from typing import Optional
 from factories.models import Factory
 from users.models import User
 
-class Request(ormar.Model):
-    ormar_config = base_ormar_config.copy(tablename='requests')
+class Dismissal(ormar.Model):
+    ormar_config = base_ormar_config.copy(tablename='dismissals')
 
     id: int = ormar.BigInteger(primary_key=True)
     creation_date: date = ormar.Date(nullable=False)
     editing_date: date = ormar.Date(nullable=False)
+    dismissal_date: date = ormar.Date(nullable=False)
+    employee_fio: str = ormar.String(nullable=False, max_length=100)
+    department: str = ormar.String(nullable=False, max_length=255)
     position: str = ormar.String(nullable=False, max_length=100)
     criticality: bool = ormar.Boolean(nullable=False)
-    status: str = ormar.String(nullable=False, max_length=20)
-    department: str = ormar.String(nullable=False, max_length=255)
+    hiring_form: str = ormar.String(nullable=False, max_length=100)
+    dismissal_reason: str = ormar.String(nullable=False, max_length=100)
 
-    hiring_form: Optional[str] = ormar.String(nullable=True, max_length=100)
-    employee_fio: Optional[str] = ormar.String(nullable=True, max_length=100)
-    closing_date: Optional[date] = ormar.Date(nullable=True)
     comment: Optional[str] = ormar.String(nullable=True, max_length=200)
 
     factory_id: int = ormar.ForeignKey(Factory, onupdate=ormar.ReferentialAction.CASCADE)
-    creator_id: int = ormar.ForeignKey(User, onupdate=ormar.ReferentialAction.CASCADE, related_name="own_requests")
-    responsible_id: int = ormar.ForeignKey(User, onupdate=ormar.ReferentialAction.CASCADE, related_name="resp_requests")
-    editor_id: int = ormar.ForeignKey(User, onupdate=ormar.ReferentialAction.CASCADE, related_name="editable_requests")
+    creator_id: int = ormar.ForeignKey(User, onupdate=ormar.ReferentialAction.CASCADE, related_name="own_dismissals")
+    responsible_id: int = ormar.ForeignKey(User, onupdate=ormar.ReferentialAction.CASCADE, related_name="resp_dismissals")
+    editor_id: int = ormar.ForeignKey(User, onupdate=ormar.ReferentialAction.CASCADE, related_name="editable_dismissals")
 
     @property
     def factory_name(self) -> str:

@@ -10,7 +10,7 @@ from . import models, schemas, utils
 JWT_ACCESS_TOKEN_EXPIRES_IN = settings.JWT_ACCESS_TOKEN_EXPIRES_IN * 60
 JWT_REFRESH_TOKEN_EXPIRES_IN = settings.JWT_REFRESH_TOKEN_EXPIRES_IN * 60
 
-
+    
 async def check_admin_permissions(Authorize: oauth2.AuthJWT) -> Union[HTTPException, None]:
     admin_email = Authorize.get_jwt_subject()
     admin = await models.User.objects.get(email=admin_email)

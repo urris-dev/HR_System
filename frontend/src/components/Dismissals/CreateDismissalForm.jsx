@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import closeIcon from '@/assets/cross.svg';
-import './RequestForm.css';
-import { editRequest } from '@/api/requests.js';
-import { getEmployees, getFactories } from "@/api/data.js";
+import './DismissalForm.css';
+import { createDismissal } from '@/api/dismissals.js';
+import { getEmployees, getFactories } from "@/api/data.js"
 
-const EditRequestForm = ({ requestData, onClose }) => {
+const CreateRequestForm = ({ onClose }) => {
   let navigate = useNavigate();
   const [employees, setEmployees] = useState([]);
   const [factories, setFactories] = useState([]);
@@ -13,17 +13,11 @@ const EditRequestForm = ({ requestData, onClose }) => {
     const loadData = async () => {
     try {
         const response = await getEmployees();
-        for (let item of response) {
-            if (item.fio == requestData.responsible_name) {
-                formData.responsible_id = item.id;
-            }
-        }
+        formData.responsible_id = response.at(0).id;
 
         const resp = await getFactories();
-        for (let item of resp) {
-          if (item.name == requestData.factory_name) {
-              formData.factory_id = item.id;
-          }
+        if (localStorage.getItem("userAccessLevel") != "Пользователь") {
+          formData.factory_id = resp.at(0).id;
         }
 
         setEmployees(response);        
@@ -39,99 +33,68 @@ const EditRequestForm = ({ requestData, onClose }) => {
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    id: requestData.id,
-    position: requestData.position,
-    criticality: requestData.criticality == "Низкая" ? "false" : "true",
-    status: requestData.status,
-    hiring_form: requestData.hiring_form || "Штат",
-    employee_fio: requestData.employee_fio || "",
-    comment: requestData.comment || "",
-    department: requestData.department,
-    factory_id: "",
-    responsible_id: ""
+    factory_id: 0,
+    department: "",
+    position: "",
+    criticality: "false",
+    hiring_form: "Штат",
+    dismissal_date: "",
+    employee_fio: "",
+    dismissal_reason: "",
+    responsible_id: 0,
+    comment: "",
   });
-  const [changedFields, setChangedFields] = useState(new Set());
 
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
-    setChangedFields(changedFields.add(e.target.name));
   };
 
-  const handleStatusChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-
-    if (e.target.value != 'Открыта') {
-      setChangedFields(changedFields.add('status'));
-      setChangedFields(changedFields.add('hiring_form'));
-      document.getElementsByName('employee_fio').item(0).setAttribute("required", "");
-    } else {
-      setChangedFields(changedFields.add('status'));
-      changedFields.delete('hiring_form');
-      document.getElementsByName('employee_fio').item(0).removeAttribute("required");
-    }
-  }
-
   function validateForm() {
-    let positionValidate, departmentValidate, employeeValidate;
-    if (changedFields.has("position")) {positionValidate = formData.position.length <= 100;}
-    if (changedFields.has("department")) {departmentValidate = formData.department.length <= 256;}
-    if (changedFields.has("employee_fio")) {employeeValidate = formData.employee_fio.length <= 100;}
+    let departmentValidate = formData.department.length <= 256;
+    let positionValidate = formData.position.length <= 100;
+    let employeeValidate = formData.employee_fio.length <= 100;
+    let dismissalValidate = formData.dismissal_reason.length <= 100;
 
-    return [positionValidate, departmentValidate, employeeValidate].every(st => st == true || st == undefined);
+    return departmentValidate && positionValidate && employeeValidate && dismissalValidate;
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
-
+    
     if (!validateForm()) {
-      alert("Ошибка входных данных");
+      alert("Ошибка длины входных данных");
       return;
-    }
-
-    if (changedFields.size == 0) {
-      alert("Измените хотя бы одно из полей");
-      return;
-    }
+    } 
 
     setLoading(true);
-    let payload = {id: formData.id};
-    for (let key of Object.keys(formData)) {
-      if (changedFields.has(key)) {
-        payload[key] = formData[key];
-      }
-    }
-
     try {
-        await editRequest(payload, changedFields);
-        alert("Заявка успешно отредактирована!");
-        window.location.reload();
+      await createDismissal(formData);
+      alert("Увольнение успешно создано!");
+      window.location.reload();
     } catch (err) {
-        if (err.message == 'Unauthorized') {
-          navigate('/login');
-        } else {
-          alert(err.message);
+      if (err.message == 'Unauthorized') {
+        navigate('/login');
+      } else {
+        alert(err.message);
         }
     }
-      
+
     setLoading(false);
   };
 
   return (
-    <div className="request-modal-overlay">
-      <div className="request-modal-content">
-        <div className="request-modal-title">
-            <span>Редактирование заявки</span>
+    <div className="dismissal-modal-overlay">
+      <div className="dismissal-modal-content">
+        <div className="dismissal-modal-title">
+            <span>Новое увольнение</span>
             <button className="close-btn" onClick={onClose}>
                 <img src={closeIcon} alt="x"/>
             </button>
         </div>
-        <form className="request-modal-form" onSubmit={handleSubmit} id="request-modal-form">
+        <form className="dismissal-modal-form" onSubmit={handleSubmit} id="dismissal-modal-form">
           {localStorage.getItem("userAccessLevel") != "Пользователь" && (
             <div className="form-group">
               <label>Завод</label>
@@ -140,9 +103,9 @@ const EditRequestForm = ({ requestData, onClose }) => {
                 value={formData.factory_id}
                 onChange={handleInputChange}
               >
-                {factories.map((fact, index) => (
-                  <option key={index} value={fact.id}>{fact.name}</option>
-                ))}
+                  {factories.map((fact, index) => (
+                    <option key={index} value={fact.id}>{fact.name}</option>
+                  ))}
               </select>
             </div>
           )}
@@ -178,18 +141,6 @@ const EditRequestForm = ({ requestData, onClose }) => {
             </select>
           </div>
           <div className="form-group">
-            <label>Статус</label>
-            <select
-              name="status"
-              value={formData.status}
-              onChange={handleStatusChange}
-            >
-              <option value="Открыта">Открыта</option>
-              <option value="В работе">В работе</option>
-              <option value="Закрыта">Закрыта</option>
-            </select>
-          </div>
-          <div className="form-group">
             <label>Форма найма</label>
             <select
               name="hiring_form"
@@ -201,12 +152,33 @@ const EditRequestForm = ({ requestData, onClose }) => {
             </select>
           </div>
           <div className="form-group">
-            <label>ФИО нанятого работника</label>
+            <label>Дата увольнения</label>
+            <input
+              type="date"
+              name="dismissal_date"
+              value={formData.dismissal_date}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>ФИО увольняемого работника</label>
             <input
               type="text"
               name="employee_fio"
               value={formData.employee_fio}
               onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Причина увольнения</label>
+            <input
+              type="text"
+              name="dismissal_reason"
+              value={formData.dismissal_reason}
+              onChange={handleInputChange}
+              required
             />
           </div>
           <div className="form-group">
@@ -230,12 +202,12 @@ const EditRequestForm = ({ requestData, onClose }) => {
             </textarea>
           </div>
         </form>
-        <button type="submit" className="submit-btn" form="request-modal-form">
-          {loading ? "Загрузка..." : "Отредактировать заявку"}
+        <button type="submit" className="submit-btn" form="dismissal-modal-form">
+          {loading ? "Загрузка..." : "Добавить увольнение"}
         </button>
       </div>
     </div>
   );
 };
 
-export default EditRequestForm;
+export default CreateRequestForm;

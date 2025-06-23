@@ -58,7 +58,7 @@ const EditEmployeeForm = ({ onClose, employeeData }) => {
     if (changedFields.includes("email")) {emailValidate = formData.email.length <= 256};
     if (changedFields.includes("password")) {passwordValidate = formData.password.length >= 8 && formData.password.length <= 60};
 
-    return fioValidate || emailValidate || passwordValidate;
+    return [fioValidate, emailValidate, passwordValidate].every(st => st == true || st == undefined);
   }
 
   async function handleSubmit(e) {

@@ -6,6 +6,9 @@ from typing import AsyncIterator
 
 from config import settings
 
+from dismissals.api import dismissal_router
+from dismissals.models import Dismissal
+
 from factories.api import factory_router
 from factories.models import Factory
 
@@ -53,6 +56,7 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+app.include_router(dismissal_router)
 app.include_router(factory_router)
 app.include_router(user_router)
 app.include_router(request_router)

@@ -1,29 +1,29 @@
-import "./Requests.css";
-import RequestItem from './RequestItem.jsx';
-import { useRequests } from '@/hooks/requests.js';
-import CreateRequestForm from './CreateRequestForm.jsx';
-import EditRequestForm from "./EditRequestForm.jsx";
+import "./Dismissals.css";
+import DismissalItem from './DismissalItem.jsx';
+import { useDismissals } from '@/hooks/dismissals.js';
+import CreateDismissalForm from './CreateDismissalForm.jsx';
+import EditDismissalForm from "./EditDismissalForm.jsx";
 import closeIcon from '@/assets/white_cross.svg';
 
-export const RequestsList = () => {
+export const DismissalsList = () => {
     const {
-        requests,
+        dismissals,
         isModalOpen,
-        editingRequest,
+        editingDismissal,
         openCreateModal,
         openEditModal,
         closeModal,
         handleFilterChange,
         handleApplyFilters,
         handleResetFilters
-    } = useRequests();
+    } = useDismissals();
 
     return <>
-        <div className="requests-list__title">
-            <span>Заявки</span>
-            <button className="add-request-btn" onClick={openCreateModal}>Добавить заявку</button>
+        <div className="dismissals-list__title">
+            <span>Увольнения</span>
+            <button className="add-dismissal-btn" onClick={openCreateModal}>Добавить увольнение</button>
         </div>
-        <form className="requests-list__filters">
+        <form className="dismissals-list__filters">
             <div className="filters__position-search">
                 <input type="text" name="position" placeholder="Название должности" onChange={handleFilterChange}/>
                 <button onClick={handleApplyFilters}>Поиск</button>
@@ -46,18 +46,12 @@ export const RequestsList = () => {
                     <option value="false">Низкая</option>
                     <option value="true">Высокая</option>
                 </select>
-                <select name="status" onChange={handleFilterChange}>
-                    <option selected disabled>Статус</option>
-                    <option value="Открыта">Открыта</option>
-                    <option value="В работе">В работе</option>
-                    <option value="Закрыта">Закрыта</option>
-                </select>
                 <button className="apply-filters" onClick={handleApplyFilters}>Применить фильтры</button>
                 <button className="reset-filters" onClick={handleResetFilters}><img src={closeIcon} alt="x" /></button>
             </div>
         </form>
-        <table className="requests-list">
-            <thead className="requests-list__headers">
+        <table className="dismissals-list">
+            <thead className="dismissals-list__headers">
                 <tr>
                 {localStorage.getItem("userAccessLevel") != "Пользователь" && (  
                     <th>Завод</th>
@@ -67,29 +61,27 @@ export const RequestsList = () => {
                     <th>
                         <div className="headers__criticality">Критичность</div>
                     </th>
-                    <th>
-                        <div className="headers__status">Статус</div>
-                    </th>
-                    <th>Ответственный</th>
+                    <th>ФИО</th>
                     <th>Дата создания</th>
-                    <th>Дата закрытия</th>
+                    <th>Дата увольнения</th>
+                    <th>Причина увольнения</th>
                 </tr>
             </thead>
             <tbody>
-                {requests.map((req, index) => (
-                <RequestItem key={index} request={req} onClick={() => openEditModal(index)}/>
+                {dismissals.map((req, index) => (
+                <DismissalItem key={index} dismissal={req} onClick={() => openEditModal(index)}/>
                 ))}
             </tbody>
         </table>
-        {!editingRequest && isModalOpen && 
-            <CreateRequestForm
+        {!editingDismissal && isModalOpen && 
+            <CreateDismissalForm
             onClose={closeModal}
             />
         }
-        {editingRequest && isModalOpen && 
-            <EditRequestForm
+        {editingDismissal && isModalOpen && 
+            <EditDismissalForm
             onClose={closeModal}
-            requestData={editingRequest}
+            dismissalData={editingDismissal}
             />
         }
     </>
