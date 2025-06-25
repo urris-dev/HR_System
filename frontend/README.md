@@ -1,12 +1,42 @@
-# React + Vite
+# Документация клиентской части
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Архитектура
 
-Currently, two official plugins are available:
+Код клиентской части представлен в папке `src`. Его архитектура делится на следующие части:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+* `api/` – модули получения и отправки данных на сервер;
+* `components/` – модули вёрстки пользовательского интерфейса;
+* `hooks/` – модули, отвечающие за обработку действий пользователя при работе с каким-либо модулем из `components/`;
 
-## Expanding the ESLint configuration
+Взаимодействие модулей на примере страницы входа в аккаунт:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. В папке `components/Login` находится основной модуль `Login.jsx`, который определяет вёрстку формы входа;
+2. Для обработки пользовательских действий он импортирует переменные состояния и функции из модуля `hooks/login.js`;
+3. `hooks/login.js` в свою очередь импортирует необходимые для входа в аккаунт функции отправки данных на сервер из модуля `api/login.js`;
+
+В папке `components/` также есть модули (`Employees`, `Requests`, `Dismissals`), что используют внутри себя не только модули из `hooks/`, но и другие модули вёрстки (**компоненты**).\
+Эти компоненты работают похожим образом, за исключением того, что логика обработки пользовательских действий находится не в отдельном модуле, а в самом компоненте.
+
+Связь основных модулей (`Login`, `Workspace`) с маршрутами производится в файле `App.jsx`.\
+Зависимости клиента хранятся в `package.json`, его настройки – в `vite.config.js`. 
+
+## Развёртывание
+### Предварительные настройки
+* Наличие Node.js 20+
+* Наличие npm
+### Запуск
+1. Установить зависимости
+```bash
+cd ./frontend
+npm install
+```
+2. Определить переменные окружения:
+```bash
+touch .env && echo VITE_API_ORIGIN=http://$(hostname -I | cut -d ' ' -f 1):8000 > .env
+```
+3. Запустить клиент:
+```bash
+npm run dev
+```
+4. Перейти по адресу http://0.0.0.0:5173/login для проверки работоспособности.
+   

@@ -1,6 +1,6 @@
 import { refreshTokens } from './auth.js';
 
-const API_URL = 'http://localhost:8000/api/requests';
+const API_URL = `${import.meta.env.VITE_API_ORIGIN}/api/requests`;
 
 export const getRequests = async (filters, filterableFields) => {
   const response = await fetch(`${API_URL}/requests-list`, {

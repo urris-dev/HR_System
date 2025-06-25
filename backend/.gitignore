@@ -2,7 +2,6 @@
 *__pycache__/
 
 # Environments
-.env
 .venv/
 
 # Database migrations
@@ -14,5 +13,3 @@ media/
 # JWT keys
 *.pem
 *.b64
-
-*.txt

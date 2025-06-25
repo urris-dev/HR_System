@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 from database import base_ormar_config
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from os import environ
 from typing import AsyncIterator
 
 from config import settings
@@ -47,7 +48,7 @@ def get_lifespan(config):
 
 app = FastAPI(lifespan=get_lifespan(base_ormar_config))
 
-origins = [settings.CLIENT_ORIGIN]
+origins = ["http://" + environ.get("CLIENT_ORIGIN") + ":5173"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

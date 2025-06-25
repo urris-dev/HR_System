@@ -1,5 +1,6 @@
 import base64
 from fastapi_jwt_auth import AuthJWT
+from os import environ
 from pydantic_settings import BaseSettings
 from typing import List
 
@@ -17,8 +18,7 @@ class Settings(BaseSettings):
         settings.JWT_PUBLIC_KEY).decode('utf-8')
     authjwt_private_key: str = base64.b64decode(
         settings.JWT_PRIVATE_KEY).decode('utf-8')
-    authjwt_cookie_domain: str = "localhost"
-    
+    authjwt_cookie_domain: str = environ.get("CLIENT_ORIGIN")
 
 @AuthJWT.load_config
 def get_config():

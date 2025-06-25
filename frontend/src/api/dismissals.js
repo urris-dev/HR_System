@@ -1,6 +1,6 @@
 import { refreshTokens } from './auth.js';
 
-const API_URL = 'http://localhost:8000/api/dismissals';
+const API_URL = `${import.meta.env.VITE_API_ORIGIN}/api/dismissals`;
 
 export const getDismissals = async (filters, filterableFields) => {
   const response = await fetch(`${API_URL}/dismissals-list`, {

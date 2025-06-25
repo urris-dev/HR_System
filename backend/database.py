@@ -1,11 +1,12 @@
 import databases
 import ormar
 import sqlalchemy
+from os import environ
 
 from config import settings
 
 
-DATABASE_URL = settings.DB_PATH
+DATABASE_URL = environ.get("DB_PATH")
 ECHO = settings.ECHO
 
 base_ormar_config = ormar.OrmarConfig(

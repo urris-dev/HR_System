@@ -2,7 +2,6 @@ from pydantic_settings import BaseSettings
 from typing import List
 
 class Settings(BaseSettings):
-    DB_PATH: str
     ECHO: bool
 
     ADMIN_FIO: str
@@ -11,7 +10,7 @@ class Settings(BaseSettings):
     ADMIN_ACCESS_LEVEL: str
     ADMIN_STATUS: bool
 
-    FACTORIES_NAMES: list[str]
+    FACTORIES_NAMES: List[str]
     FACTORIES_PRODUCTION_RATE: List[int]
 
     JWT_ALGORITHM: str
@@ -19,14 +18,6 @@ class Settings(BaseSettings):
     JWT_REFRESH_TOKEN_EXPIRES_IN: int
     JWT_PUBLIC_KEY: str
     JWT_PRIVATE_KEY: str
-
-    # SMTP_HOST: str
-    # SMTP_PORT: int
-    # SMTP_USER: str
-    # SMTP_APPLICATION_PASSWORD: str
-
-    CLIENT_ORIGIN: str
-    # SERVER_ORIGIN: str
 
     REGEX_PASSWORD_TEMPLATE: str
 

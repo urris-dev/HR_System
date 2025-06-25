@@ -1,6 +1,6 @@
 import { refreshTokens } from './auth.js';
 
-const API_URL = "http://localhost:8000/api";
+const API_URL = `${import.meta.env.VITE_API_ORIGIN}/api`;
 
 export const getEmployees = async () => {
     const response = await fetch(`${API_URL}/users/users`, {
