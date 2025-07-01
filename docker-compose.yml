@@ -15,4 +15,5 @@ services:
 volumes:
   superset_data:
 
-# Экспорт всех данных: docker cp superset:/app/superset_home/superset.db /home/$USER/Desktop/ss_db.db
+# Экспорт всех настроек superset: docker cp superset:/app/superset_home/superset.db ./ss_db.db
+# Импорт всех настроек superset: docker cp ./ss_db.db superset:/app/superset_home/superset.db
